@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Exam Portal</title>
+    <style>
+        body, html { margin: 0; padding: 0; height: 100%; overflow: hidden; font-family: sans-serif; }
+        
+        /* The Google Form Embed */
+        iframe { border: none; width: 100%; height: 100%; }
+
+        /* The Lock Screen Overlay */
+        #lock-screen {
+            display: none; /* Hidden by default */
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background-color: rgba(20, 20, 20, 0.95); color: white;
+            z-index: 9999; flex-direction: column; align-items: center; justify-content: center;
+        }
+        
+        .box { background: #333; padding: 30px; border-radius: 8px; text-align: center; }
+        input { padding: 10px; margin-top: 15px; width: 80%; font-size: 16px; }
+        button { padding: 10px 20px; margin-top: 10px; cursor: pointer; font-size: 16px; }
+        .error { color: #ff4d4d; margin-top: 10px; display: none; }
+    </style>
+</head>
+<body>
+
+    <!-- Replace the src link with your Google Form Embed URL -->
+    <iframe src="https://docs.google.com/forms/d/e/1FAIpQLSf84EYLlcjwo-OWArdgiOtH5_XG4hJZ0ibWarwtjF-3YIAvQw/viewform?embedded=true">Loading…</iframe>
+
+    <div id="lock-screen">
+        <div class="box">
+            <h2>Exam Locked</h2>
+            <p>You left the exam window. Ask your teacher to unlock it.</p>
+            <input type="password" id="teacher-password" placeholder="Teacher Password">
+            <br>
+            <button onclick="checkPassword()">Unlock Exam</button>
+            <div id="error-msg" class="error">Incorrect Password</div>
+        </div>
+    </div>
+
+    <script>
+        const TEACHER_PASSWORD = "8888"; // Change this to your desired password
+        const lockScreen = document.getElementById("lock-screen");
+        const errorMsg = document.getElementById("error-msg");
+        let isLocked = false;
+
+        // Detect if user switches tabs, minimizes Chrome, or opens another app
+        window.addEventListener("blur", triggerLock);
+        document.addEventListener("visibilitychange", () => {
+            if (document.hidden) triggerLock();
+        });
+
+        function triggerLock() {
+            if (!isLocked) {
+                isLocked = true;
+                lockScreen.style.display = "flex";
+            }
+        }
+
+        function checkPassword() {
+            const input = document.getElementById("teacher-password").value;
+            if (input === TEACHER_PASSWORD) {
+                lockScreen.style.display = "none";
+                document.getElementById("teacher-password").value = "";
+                errorMsg.style.display = "none";
+                isLocked = false;
+            } else {
+                errorMsg.style.display = "block";
+            }
+        }
+    </script>
+</body>
+</html>
