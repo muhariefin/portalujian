@@ -39,17 +39,31 @@
             <div id="error-msg" class="error">Incorrect Password</div>
         </div>
     </div>
-
-    <script>
-        const TEACHER_PASSWORD = "8888"; // Change this to your desired password
+<script>
+        const TEACHER_PASSWORD = "TEACHER_UNLOCK_123"; // Change this to your desired password
         const lockScreen = document.getElementById("lock-screen");
         const errorMsg = document.getElementById("error-msg");
         let isLocked = false;
 
-        // Detect if user switches tabs, minimizes Chrome, or opens another app
-        window.addEventListener("blur", triggerLock);
+        // 1. Detect if student switches to another tab or minimizes the browser
         document.addEventListener("visibilitychange", () => {
             if (document.hidden) triggerLock();
+        });
+
+        // 2. Detect if student opens another app (window loses focus)
+        window.addEventListener("blur", () => {
+            // Prevent locking if the student is just clicking inside the Google Form
+            if (document.activeElement && document.activeElement.tagName === 'IFRAME') {
+                return; 
+            }
+            triggerLock();
+        });
+
+        // 3. Warn the student if they try to close or refresh the tab
+        window.addEventListener("beforeunload", (event) => {
+            // This triggers the browser's default "Are you sure you want to leave?" popup
+            event.preventDefault();
+            event.returnValue = ""; 
         });
 
         function triggerLock() {
